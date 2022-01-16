@@ -1,0 +1,65 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:8
+    env_file:
+      - database.env
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8000:8080"
+    volumes:
+      - ./api:/usr/share/nginx/html/doc
+    environment:
+      API_URL: doc/openapi.yaml
+    restart: always
+
+  fs-migrate:
+    image: mytds/fs-migrate
+    build:
+      context: migrate
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - database.env
+
+  fs-backend:
+    image: mytds/fs-backend
+    build:
+      context: backend
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - database.env
+
+  fs-gateway:
+    image: mytds/fs-gateway
+    build:
+      context: gateway
+      dockerfile: ./Dockerfile
+    depends_on:
+      - fs-backend
+    environment:
+      - BACKEND_URI=http://fs-backend:8080
+      - JWT_SECRET=secret
+    ports:
+      - "9000:80"
+
+  fs-front:
+    image: mytds/fs-front
+    build:
+      context: front
+      dockerfile: ./Dockerfile
+      args:
+        REACT_APP_API_URL: http://fs.xy8.ru:9000/api
+    depends_on:
+      - fs-gateway
+    ports:
+      - "3000:80"
+    restart: always
+
+

@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  db:
+    volumes:
+      - fs_mysql_data:/var/lib/mysql
+
+volumes:
+  fs_mysql_data:
+    driver: local

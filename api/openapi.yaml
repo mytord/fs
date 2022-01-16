@@ -1,0 +1,226 @@
+openapi: 3.0.1
+info:
+  title: First social
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://fs.xy8.ru:9000/api
+    description: Production environment
+  - url: http://127.0.0.1/api
+    description: Local environment
+tags:
+  - name: public
+  - name: private
+paths:
+  /login:
+    post:
+      tags:
+        - public
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginCredentials'
+      responses:
+        200:
+          description: login success
+          headers:
+            X-Set-Token:
+              description: jwt token
+              schema:
+                type: string
+            X-Token-Expires:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+        401:
+          description: invalid credentials
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      summary: Logs user into the system
+  /register:
+    post:
+      tags:
+        - public
+      operationId: createProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+        required: true
+      responses:
+        200:
+          description: registration success
+        400:
+          description: registration failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      summary: Register new profile
+  /profiles:
+    get:
+      tags:
+        - private
+      operationId: listProfiles
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Profile'
+                type: array
+          description: registration success
+        401:
+          description: unauthorized
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - jwt: [ ]
+      summary: List profiles
+  /profiles/{id}:
+    get:
+      tags:
+        - private
+      operationId: getProfile
+      parameters:
+        - description: ID of profile to return
+          explode: false
+          in: path
+          name: id
+          required: true
+          schema:
+            format: int64
+            type: integer
+          style: simple
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: registration success
+        404:
+          description: not found
+        401:
+          description: unauthorized
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - jwt: [ ]
+      summary: Get profile by id
+  /profile:
+    get:
+      tags:
+        - private
+      operationId: getCurrentProfile
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: success
+        401:
+          description: unauthorized
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - jwt: [ ]
+      summary: Get current profile
+components:
+  schemas:
+    ErrorResponse:
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+              params:
+                type: object
+    LoginCredentials:
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+      type: object
+    Profile:
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        email:
+          format: email
+          maxLength: 255
+          type: string
+        password:
+          format: password
+          maxLength: 255
+          type: string
+          writeOnly: true
+        firstName:
+          maxLength: 255
+          type: string
+        lastName:
+          maxLength: 255
+          type: string
+        age:
+          maximum: 99
+          minimum: 0
+          type: integer
+        city:
+          maxLength: 255
+          type: string
+        interests:
+          maxLength: 1000
+          type: string
+      required:
+        - age
+        - city
+        - email
+        - firstName
+        - interests
+        - lastName
+        - password
+      type: object
+  securitySchemes:
+    jwt:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+
