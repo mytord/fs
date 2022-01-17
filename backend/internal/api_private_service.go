@@ -76,6 +76,8 @@ func (s *PrivateApiService) ListProfiles(ctx context.Context, limit, offset int3
 	limitInt := Min(int(limit), 100)
 	offsetInt := int(offset)
 
+	// infinite scrolling: using pk range filter and over-limit query
+	// to avoid count queries
 	profiles, err := s.profileRep.FindAll(limitInt+1, offsetInt)
 
 	if err != nil {
