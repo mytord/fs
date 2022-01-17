@@ -1,9 +1,9 @@
 package internal
 
 import (
+	"github.com/go-chi/chi/v5"
 	openapi "github.com/mytord/fs/backend/gen/opencliapi"
 	"github.com/mytord/fs/backend/internal/middlewares"
-	"github.com/go-chi/chi/v5"
 	"net/http"
 )
 

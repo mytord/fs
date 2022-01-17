@@ -13,10 +13,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/go-playground/validator/v10"
 	openapi "github.com/mytord/fs/backend/gen/opencliapi"
 	"github.com/mytord/fs/backend/internal/entities"
 	"github.com/mytord/fs/backend/internal/repositories"
-	"github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )

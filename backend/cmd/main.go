@@ -3,10 +3,10 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	openapi "github.com/mytord/fs/backend/gen/opencliapi"
 	"github.com/mytord/fs/backend/internal"
 	"github.com/mytord/fs/backend/internal/repositories"
-	_ "github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
 	"net/http"
 	"os"
