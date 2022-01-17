@@ -78,14 +78,26 @@ paths:
       tags:
         - private
       operationId: listProfiles
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
       responses:
         200:
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Profile'
-                type: array
+                $ref: '#/components/schemas/ProfileCollection'
           description: registration success
         401:
           description: unauthorized
@@ -169,6 +181,15 @@ components:
                 type: string
               params:
                 type: object
+    BaseCollection:
+      properties:
+        entities:
+          type: array
+          items:
+            type: object
+        hasMore:
+          type: boolean
+          writeOnly: true
     LoginCredentials:
       properties:
         email:
@@ -218,6 +239,14 @@ components:
         - lastName
         - password
       type: object
+    ProfileCollection:
+      allOf:
+        - $ref: '#/components/schemas/BaseCollection'
+      properties:
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Profile'
   securitySchemes:
     jwt:
       bearerFormat: JWT

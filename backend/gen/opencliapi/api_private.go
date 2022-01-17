@@ -104,7 +104,18 @@ func (c *PrivateApiController) GetProfile(w http.ResponseWriter, r *http.Request
 
 // ListProfiles - List profiles
 func (c *PrivateApiController) ListProfiles(w http.ResponseWriter, r *http.Request) {
-	result, err := c.service.ListProfiles(r.Context())
+	query := r.URL.Query()
+	limitParam, err := parseInt32Parameter(query.Get("limit"), false)
+	if err != nil {
+		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
+		return
+	}
+	offsetParam, err := parseInt32Parameter(query.Get("offset"), false)
+	if err != nil {
+		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
+		return
+	}
+	result, err := c.service.ListProfiles(r.Context(), limitParam, offsetParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)

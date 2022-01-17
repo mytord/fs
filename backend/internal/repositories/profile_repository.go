@@ -76,8 +76,8 @@ func (r *ProfileRepository) Find(id int) (entities.Profile, error) {
 	return profile, nil
 }
 
-func (r *ProfileRepository) FindAll() ([]entities.Profile, error) {
-	rows, err := r.db.Query(`SELECT * FROM profiles ORDER BY id DESC`)
+func (r *ProfileRepository) FindAll(limit, offset int) ([]entities.Profile, error) {
+	rows, err := r.db.Query(`SELECT * FROM profiles p WHERE id > ? ORDER BY id LIMIT ?`, offset, limit)
 
 	if err != nil {
 		return nil, err

@@ -72,17 +72,27 @@ func (s *PrivateApiService) GetProfile(ctx context.Context, id int64) (openapi.I
 }
 
 // ListProfiles - List profiles
-func (s *PrivateApiService) ListProfiles(ctx context.Context) (openapi.ImplResponse, error) {
-	profiles, err := s.profileRep.FindAll()
+func (s *PrivateApiService) ListProfiles(ctx context.Context, limit, offset int32) (openapi.ImplResponse, error) {
+	limitInt := Min(int(limit), 100)
+	offsetInt := int(offset)
+
+	profiles, err := s.profileRep.FindAll(limitInt+1, offsetInt)
 
 	if err != nil {
 		return ErrorResponse(err)
 	}
 
-	var response []openapi.Profile
+	cntProfilesFound := len(profiles)
+	cntProfilesToShow := Min(cntProfilesFound, limitInt)
 
-	for _, profile := range profiles {
-		response = append(response, openapi.Profile{
+	response := openapi.ProfileCollection{
+		HasMore:  cntProfilesFound > limitInt,
+		Entities: []openapi.Profile{},
+	}
+
+	for i := 0; i < cntProfilesToShow; i++ {
+		profile := profiles[i]
+		response.Entities = append(response.Entities, openapi.Profile{
 			Id:        int32(profile.Id),
 			Email:     profile.Email,
 			FirstName: profile.FirstName,

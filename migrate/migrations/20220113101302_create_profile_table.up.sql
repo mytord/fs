@@ -7,7 +7,9 @@ create table if not exists profiles
     last_name  varchar(255)  not null,
     city       varchar(255)  not null,
     age        int           not null,
-    interests  text          null
+    interests  text          null,
+    constraint profiles_pk
+        primary key (id)
 );
 
 # create unique index udx_profiles_email
