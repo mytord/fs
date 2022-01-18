@@ -19,7 +19,7 @@ function People() {
   }, []);
 
   const fetchProfiles = async () => {
-    const response = await privateApi.listProfiles(12, lastProfileId, {headers: authHeaders(auth.user)});
+    const response = await privateApi.listProfiles(30, lastProfileId, {headers: authHeaders(auth.user)});
 
     if (response.data.entities) {
       setProfiles(profiles.concat(response.data.entities));
@@ -39,6 +39,7 @@ function People() {
         next={fetchProfiles}
         hasMore={hasMore}
         loader={<Spinner animation="border"/>}
+        scrollThreshold={0.95}
       >
         <Row xs={1} md={2}>
           {profiles.map(
