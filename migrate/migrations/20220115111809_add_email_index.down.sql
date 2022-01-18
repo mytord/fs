@@ -1,0 +1,1 @@
+drop index udx_profiles_email ON profiles;
