@@ -24,6 +24,25 @@ import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } fr
 /**
  * 
  * @export
+ * @interface BaseCollection
+ */
+export interface BaseCollection {
+    /**
+     * 
+     * @type {Array<object>}
+     * @memberof BaseCollection
+     */
+    'entities'?: Array<object>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof BaseCollection
+     */
+    'hasMore'?: boolean;
+}
+/**
+ * 
+ * @export
  * @interface ErrorResponse
  */
 export interface ErrorResponse {
@@ -127,6 +146,25 @@ export interface Profile {
      */
     'interests': string;
 }
+/**
+ * 
+ * @export
+ * @interface ProfileCollection
+ */
+export interface ProfileCollection {
+    /**
+     * 
+     * @type {Array<Profile>}
+     * @memberof ProfileCollection
+     */
+    'entities'?: Array<Profile>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ProfileCollection
+     */
+    'hasMore'?: boolean;
+}
 
 /**
  * PrivateApi - axios parameter creator
@@ -209,10 +247,12 @@ export const PrivateApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary List profiles
+         * @param {number} [limit] 
+         * @param {number} [offset] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listProfiles: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listProfiles: async (limit?: number, offset?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/profiles`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -228,6 +268,14 @@ export const PrivateApiAxiosParamCreator = function (configuration?: Configurati
             // authentication jwt required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (offset !== undefined) {
+                localVarQueryParameter['offset'] = offset;
+            }
 
 
     
@@ -274,11 +322,13 @@ export const PrivateApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary List profiles
+         * @param {number} [limit] 
+         * @param {number} [offset] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listProfiles(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Profile>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listProfiles(options);
+        async listProfiles(limit?: number, offset?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProfileCollection>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listProfiles(limit, offset, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -313,11 +363,13 @@ export const PrivateApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @summary List profiles
+         * @param {number} [limit] 
+         * @param {number} [offset] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listProfiles(options?: any): AxiosPromise<Array<Profile>> {
-            return localVarFp.listProfiles(options).then((request) => request(axios, basePath));
+        listProfiles(limit?: number, offset?: number, options?: any): AxiosPromise<ProfileCollection> {
+            return localVarFp.listProfiles(limit, offset, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -355,12 +407,14 @@ export class PrivateApi extends BaseAPI {
     /**
      * 
      * @summary List profiles
+     * @param {number} [limit] 
+     * @param {number} [offset] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PrivateApi
      */
-    public listProfiles(options?: AxiosRequestConfig) {
-        return PrivateApiFp(this.configuration).listProfiles(options).then((request) => request(this.axios, this.basePath));
+    public listProfiles(limit?: number, offset?: number, options?: AxiosRequestConfig) {
+        return PrivateApiFp(this.configuration).listProfiles(limit, offset, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
