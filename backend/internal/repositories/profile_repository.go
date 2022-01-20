@@ -76,11 +76,31 @@ func (r *ProfileRepository) Find(id int) (entities.Profile, error) {
 	return profile, nil
 }
 
-func (r *ProfileRepository) FindAll(limit, offsetId int) ([]entities.Profile, error) {
-	rows, err := r.db.Query(`SELECT * FROM profiles p WHERE id > ? ORDER BY id LIMIT ?`, offsetId, limit)
+func (r *ProfileRepository) FindAll(search string, limit, offset int) ([]entities.Profile, error) {
+	var query string
+
+	query += `SELECT * FROM profiles p`
+
+	if search != "" {
+		query += ` WHERE first_name LIKE ? OR last_name LIKE ?`
+	}
+
+	query += ` ORDER BY id`
+	query += ` LIMIT ? OFFSET ?`
+
+	stmt, err := r.db.Prepare(query)
 
 	if err != nil {
 		return nil, err
+	}
+
+	var rows *sql.Rows
+
+	if search != "" {
+		search = search + string('%')
+		rows, err = stmt.Query(search, search, limit, offset)
+	} else {
+		rows, err = stmt.Query(limit, offset)
 	}
 
 	defer rows.Close()

@@ -92,6 +92,10 @@ paths:
             type: integer
             minimum: 0
             default: 0
+        - in: query
+          name: search
+          schema:
+            type: string
       responses:
         200:
           content:

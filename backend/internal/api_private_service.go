@@ -72,13 +72,13 @@ func (s *PrivateApiService) GetProfile(ctx context.Context, id int64) (openapi.I
 }
 
 // ListProfiles - List profiles
-func (s *PrivateApiService) ListProfiles(ctx context.Context, limit, offset int32) (openapi.ImplResponse, error) {
+func (s *PrivateApiService) ListProfiles(ctx context.Context, limit, offset int32, search string) (openapi.ImplResponse, error) {
 	limitInt := Min(int(limit), 100)
 	offsetInt := int(offset)
 
 	// infinite scrolling: using offset filter and over-limit query
 	// to avoid count queries
-	profiles, err := s.profileRep.FindAll(limitInt+1, offsetInt)
+	profiles, err := s.profileRep.FindAll(search, limitInt+1, offsetInt)
 
 	if err != nil {
 		return ErrorResponse(err)

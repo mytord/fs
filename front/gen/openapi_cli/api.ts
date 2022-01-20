@@ -249,10 +249,11 @@ export const PrivateApiAxiosParamCreator = function (configuration?: Configurati
          * @summary List profiles
          * @param {number} [limit] 
          * @param {number} [offset] 
+         * @param {string} [search] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listProfiles: async (limit?: number, offset?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listProfiles: async (limit?: number, offset?: number, search?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/profiles`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -275,6 +276,10 @@ export const PrivateApiAxiosParamCreator = function (configuration?: Configurati
 
             if (offset !== undefined) {
                 localVarQueryParameter['offset'] = offset;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
             }
 
 
@@ -324,11 +329,12 @@ export const PrivateApiFp = function(configuration?: Configuration) {
          * @summary List profiles
          * @param {number} [limit] 
          * @param {number} [offset] 
+         * @param {string} [search] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listProfiles(limit?: number, offset?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProfileCollection>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listProfiles(limit, offset, options);
+        async listProfiles(limit?: number, offset?: number, search?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProfileCollection>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listProfiles(limit, offset, search, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -365,11 +371,12 @@ export const PrivateApiFactory = function (configuration?: Configuration, basePa
          * @summary List profiles
          * @param {number} [limit] 
          * @param {number} [offset] 
+         * @param {string} [search] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listProfiles(limit?: number, offset?: number, options?: any): AxiosPromise<ProfileCollection> {
-            return localVarFp.listProfiles(limit, offset, options).then((request) => request(axios, basePath));
+        listProfiles(limit?: number, offset?: number, search?: string, options?: any): AxiosPromise<ProfileCollection> {
+            return localVarFp.listProfiles(limit, offset, search, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -409,12 +416,13 @@ export class PrivateApi extends BaseAPI {
      * @summary List profiles
      * @param {number} [limit] 
      * @param {number} [offset] 
+     * @param {string} [search] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PrivateApi
      */
-    public listProfiles(limit?: number, offset?: number, options?: AxiosRequestConfig) {
-        return PrivateApiFp(this.configuration).listProfiles(limit, offset, options).then((request) => request(this.axios, this.basePath));
+    public listProfiles(limit?: number, offset?: number, search?: string, options?: AxiosRequestConfig) {
+        return PrivateApiFp(this.configuration).listProfiles(limit, offset, search, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -1,42 +1,35 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {privateApi} from "../services/api";
-import {Profile as ProfileModel} from "typescript-axios";
-import AuthContext from "./authContext";
-import authHeaders from "../services/authHeaders";
-import {Button, Card, Col, Row, Spinner} from "react-bootstrap";
+import React, {useState} from 'react';
+import {Button, Card, Col, Form, Row, Spinner} from "react-bootstrap";
 import InfiniteScroll from "react-infinite-scroll-component";
+import usePeopleSearch from "./usePeopleSearch";
 
 function People() {
-  const [profiles, setProfiles] = useState<ProfileModel[]>([]);
-  const [lastProfileId, setLastProfileId] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const auth = useContext(AuthContext);
+  const limit = 30;
+  const [query, setQuery] = useState("");
+  const [offset, setOffset] = useState(0);
+  const {profiles, hasMore} = usePeopleSearch(query, offset, limit);
 
-  useEffect(() => {
-    (async () => {
-      await fetchProfiles();
-    })();
-  }, []);
-
-  const fetchProfiles = async () => {
-    const response = await privateApi.listProfiles(30, lastProfileId, {headers: authHeaders(auth.user)});
-
-    if (response.data.entities) {
-      setProfiles(profiles.concat(response.data.entities));
-      setLastProfileId(response.data.entities[response.data.entities.length - 1].id!);
-    }
-
-    if (!response.data.hasMore) {
-      setHasMore(false);
-    }
+  const handleSearch = (e: any) => {
+    setQuery(e.target.value);
+    setOffset(0);
   };
+
+  const handleNext = () => {
+    setOffset(prevOffset => prevOffset + limit);
+  }
 
   return (
     <div>
       <h2>People</h2>
+      <Form.Control
+        className={"mt-4 mb-4"}
+        type="text"
+        placeholder="Start typing first name or last name..."
+        onChange={handleSearch}
+      />
       <InfiniteScroll
         dataLength={profiles.length}
-        next={fetchProfiles}
+        next={handleNext}
         hasMore={hasMore}
         loader={<Spinner animation="border"/>}
         scrollThreshold={0.95}
