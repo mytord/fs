@@ -5,28 +5,45 @@ import usePeopleSearch from "./usePeopleSearch";
 
 function People() {
   const limit = 30;
-  const [query, setQuery] = useState("");
+  const [filterFirstName, setFilterFirstName] = useState("")
+  const [filterLastName, setFilterLastName] = useState("")
   const [offset, setOffset] = useState(0);
-  const {profiles, hasMore} = usePeopleSearch(query, offset, limit);
+  const {profiles, hasMore} = usePeopleSearch(filterFirstName, filterLastName, offset, limit);
 
   const handleSearch = (e: any) => {
-    setQuery(e.target.value);
+    e.preventDefault();
+    setFilterFirstName(e.target.firstName.value || "")
+    setFilterLastName(e.target.lastName.value || "")
     setOffset(0);
   };
 
   const handleNext = () => {
     setOffset(prevOffset => prevOffset + limit);
-  }
+  };
+
+  const handleReset = () => {
+    setFilterFirstName("")
+    setFilterLastName("")
+    setOffset(0);
+  };
 
   return (
     <div>
       <h2>People</h2>
-      <Form.Control
-        className={"mt-4 mb-4"}
-        type="text"
-        placeholder="Start typing first name or last name..."
-        onChange={handleSearch}
-      />
+      <Form onSubmit={handleSearch} className={"mt-4 mb-4"}>
+        <Row>
+          <Col>
+            <Form.Control name="firstName" placeholder="First name" />
+          </Col>
+          <Col>
+            <Form.Control name="lastName" placeholder="Last name" />
+          </Col>
+          <Col>
+            <Button type="submit">Search</Button>
+            <Button type="reset" variant={"secondary"} onClick={handleReset} className={"ms-2"}>Reset</Button>
+          </Col>
+        </Row>
+      </Form>
       <InfiniteScroll
         dataLength={profiles.length}
         next={handleNext}

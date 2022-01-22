@@ -40,7 +40,7 @@ type PublicApiRouter interface {
 type PrivateApiServicer interface { 
 	GetCurrentProfile(context.Context) (ImplResponse, error)
 	GetProfile(context.Context, int64) (ImplResponse, error)
-	ListProfiles(context.Context, int32, int32, string) (ImplResponse, error)
+	ListProfiles(context.Context, int32, int32, string, string) (ImplResponse, error)
 }
 
 

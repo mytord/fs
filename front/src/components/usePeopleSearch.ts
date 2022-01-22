@@ -5,20 +5,20 @@ import AuthContext from "./authContext";
 import axios, {Canceler} from "axios";
 import {Profile} from "typescript-axios";
 
-function usePeopleSearch(query: string, offset: number, limit: number) {
+function usePeopleSearch(filterFirstName: string, filterLastName: string, offset: number, limit: number) {
   const auth = useContext(AuthContext);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     setProfiles([]);
-  }, [query]);
+  }, [filterFirstName, filterLastName]);
 
   useEffect(() => {
     let cancel: Canceler;
 
     privateApi
-      .listProfiles(limit, offset, query, {
+      .listProfiles(limit, offset, filterFirstName, filterLastName, {
         cancelToken: new axios.CancelToken(c => cancel = c),
         headers: authHeaders(auth.user),
       })
@@ -40,7 +40,7 @@ function usePeopleSearch(query: string, offset: number, limit: number) {
     ;
 
     return () => cancel();
-  }, [query, offset]);
+  }, [filterFirstName, filterLastName, offset]);
 
   return {profiles, hasMore};
 }

@@ -93,7 +93,11 @@ paths:
             minimum: 0
             default: 0
         - in: query
-          name: search
+          name: filterFirstName
+          schema:
+            type: string
+        - in: query
+          name: filterLastName
           schema:
             type: string
       responses:

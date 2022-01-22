@@ -76,31 +76,30 @@ func (r *ProfileRepository) Find(id int) (entities.Profile, error) {
 	return profile, nil
 }
 
-func (r *ProfileRepository) FindAll(search string, limit, offset int) ([]entities.Profile, error) {
+func (r *ProfileRepository) FindAll(filterFirstName, filterLastName string, limit, offset int) ([]entities.Profile, error) {
 	var query string
+	var params []interface{}
 
-	query += `SELECT * FROM profiles p`
+	query += `SELECT * FROM profiles p WHERE 1=1`
 
-	if search != "" {
-		query += ` WHERE first_name LIKE ? OR last_name LIKE ?`
+	if filterFirstName != "" {
+		query += ` AND first_name LIKE ?`
+		params = append(params, filterFirstName+"%")
+	}
+
+	if filterLastName != "" {
+		query += ` AND last_name LIKE ?`
+		params = append(params, filterLastName+"%")
 	}
 
 	query += ` ORDER BY id`
 	query += ` LIMIT ? OFFSET ?`
+	params = append(params, limit, offset)
 
-	stmt, err := r.db.Prepare(query)
+	rows, err := r.db.Query(query, params...)
 
 	if err != nil {
 		return nil, err
-	}
-
-	var rows *sql.Rows
-
-	if search != "" {
-		search = search + string('%')
-		rows, err = stmt.Query(search, search, limit, offset)
-	} else {
-		rows, err = stmt.Query(limit, offset)
 	}
 
 	defer rows.Close()

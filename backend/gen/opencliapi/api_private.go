@@ -115,8 +115,9 @@ func (c *PrivateApiController) ListProfiles(w http.ResponseWriter, r *http.Reque
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
 		return
 	}
-	searchParam := query.Get("search")
-	result, err := c.service.ListProfiles(r.Context(), limitParam, offsetParam, searchParam)
+	filterFirstNameParam := query.Get("filterFirstName")
+	filterLastNameParam := query.Get("filterLastName")
+	result, err := c.service.ListProfiles(r.Context(), limitParam, offsetParam, filterFirstNameParam, filterLastNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
