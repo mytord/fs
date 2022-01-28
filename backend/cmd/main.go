@@ -40,7 +40,7 @@ func main() {
 }
 
 func initLogger() {
-	logger, err := zap.NewDevelopment()
+	logger, err := zap.NewProduction()
 	defer logger.Sync()
 
 	if err != nil {

@@ -68,8 +68,6 @@ func (auth *Auth) ApplyToken() ResponseMiddleware {
 		resp.Header.Set(HeaderSetToken, tokenString)
 		resp.Header.Set(HeaderTokenExpires, expiresAt.UTC().Format(time.RFC1123))
 
-		log.Printf("token `%s` was applied to response", tokenString)
-
 		return nil
 	}
 }
@@ -110,7 +108,5 @@ func (auth *Auth) Authorize(inner RequestMiddleware) RequestMiddleware {
 		}
 
 		req.Header.Set(HeaderUserId, strconv.Itoa(claims.UserId))
-
-		log.Printf("request was authorized by user %d", claims.UserId)
 	}
 }
