@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
@@ -11,7 +10,6 @@ import (
 	"go.uber.org/zap"
 	"net/http"
 	"os"
-	"time"
 )
 
 func main() {
@@ -36,38 +34,9 @@ func main() {
 
 	router := internal.NewRouter(publicApiController.Routes(), privateApiController.Routes())
 
-	srv := &http.Server{
-		Addr:         ":8080",
-		Handler:      router,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
+	zap.S().Debug("backend server started")
 
-	ctx := context.Background()
-
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			zap.S().Fatalf("failed to run server: %s", err)
-		}
-	}()
-
-	zap.S().Info("server started")
-
-	<-ctx.Done()
-
-	zap.S().Info("stopping server")
-
-	ctxShutDown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-
-	defer func() {
-		cancel()
-	}()
-
-	if err := srv.Shutdown(ctxShutDown); err != nil {
-		zap.S().Fatalf("shutdown failed: %s", err)
-	}
-
-	zap.S().Info("server stopped")
+	zap.S().Fatal(http.ListenAndServe(":8080", router))
 }
 
 func initLogger() {
