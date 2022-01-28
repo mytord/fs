@@ -22,7 +22,7 @@ func Logger(next http.Handler) http.Handler {
 
 		t1 := time.Now()
 		defer func() {
-			zap.L().Info("Served",
+			zap.L().Debug("Served",
 				zap.String("scheme", r.Proto),
 				zap.String("path", r.URL.Path),
 				zap.Duration("duration", time.Since(t1)),
