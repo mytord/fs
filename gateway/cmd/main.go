@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 )
 
 func main() {
@@ -36,5 +37,12 @@ func main() {
 
 	log.Print("gateway server started")
 
-	log.Fatal(http.ListenAndServe(":80", handler))
+	srv := &http.Server{
+		Addr:         ":80",
+		Handler:      handler,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
+	log.Fatal(srv.ListenAndServe())
 }
