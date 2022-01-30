@@ -46,9 +46,11 @@ EXPLAIN:
 EXPLAIN ANALYZE
 SELECT * FROM profiles
 WHERE first_name like 'my%' and last_name like 'moo%'
+LIMIT 30 OFFSET 0
 ```
 ```
--> Index range scan on profiles using idx_profiles_first_name_last_name over ('my' <= first_name <= 'my%' AND 'moo' <= last_name <= 'moo%'), with index condition: ((`profiles`.first_name like 'my%') and (`profiles`.last_name like 'moo%'))  (cost=3520.63 rows=4253) (actual time=0.232..1.628 rows=9 loops=1)
+-> Limit: 30 row(s)  (cost=3517.32 rows=30) (actual time=0.413..2.332 rows=9 loops=1)
+    -> Index range scan on profiles using idx_profiles_first_name_last_name over ('my' <= first_name <= 'my...' AND 'moo' <= last_name <= 'moo...'), with index condition: ((`profiles`.first_name like 'my%') and (`profiles`.last_name like 'moo%'))  (cost=3517.32 rows=4253) (actual time=0.411..2.327 rows=9 loops=1)
 ```
 
 
