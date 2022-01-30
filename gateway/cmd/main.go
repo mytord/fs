@@ -40,8 +40,8 @@ func main() {
 	srv := &http.Server{
 		Addr:         ":80",
 		Handler:      handler,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  10 * time.Second,
 	}
 
 	log.Fatal(srv.ListenAndServe())
